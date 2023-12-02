@@ -1,16 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
 import studentValidationSchema from './student.validation';
+import httpStatus from 'http-status';
+import sendResponse from '../../utils/sendResponse';
 
 const getStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await StudentServices.getStudentsFromDB();
 
-    res.status(200).json({
+    sendResponse(res, {
       success: true,
+      statusCode: httpStatus.OK,
       message: 'Students fetched successfully',
       data: result,
-    });
+    })
+
   } catch (error) {
     next(error);
   }
@@ -21,11 +25,13 @@ const getSingleStudent = async (req: Request, res: Response, next: NextFunction)
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
 
-    res.status(200).json({
+    sendResponse(res, {
       success: true,
-      message: 'Students fetched successfully',
+      statusCode: httpStatus.OK,
+      message: 'Student fetched successfully',
       data: result,
-    });
+    })
+
   } catch (error) {
     next(error);
   }
@@ -39,11 +45,12 @@ const deleteStudent = async (req: Request, res: Response, next: NextFunction) =>
     
     const result = await StudentServices.deleteStudentFromDB(studentId);
 
-    res.status(400).json({
+    sendResponse(res, {
       success: true,
+      statusCode: httpStatus.OK,
       message: 'Student deleted successfully',
       data: result,
-    });
+    })
   } catch (error:any) {
     next(error);
   }

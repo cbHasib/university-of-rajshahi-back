@@ -5,14 +5,14 @@ import { StudentRoute } from './app/modules/student/student.route';
 import { UserRoute } from './app/modules/user/user.route';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFoundHandler from './app/middlewares/notFoundHandler';
+import router from './app/routes';
 
 // parser
 app.use(express.json());
 app.use(cors());
 
 // Application routes
-app.use('/api/v1/students', StudentRoute);
-app.use('/api/v1/users', UserRoute);
+app.use('/api/v1', router);
 
 app.get('/', (req, res) => {
   const a = 10;
