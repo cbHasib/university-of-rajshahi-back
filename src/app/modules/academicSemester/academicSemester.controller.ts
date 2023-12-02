@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { academicSemesterService } from "./academicSemester.service";
+import createHttpError from "http-errors";
 
 const createAcademicSemester = catchAsync(async (req, res) => {
   const academicSemester = await academicSemesterService.createAcademicSemesterIntoDB(req.body);
@@ -14,6 +15,53 @@ const createAcademicSemester = catchAsync(async (req, res) => {
   })
 });
 
+
+const getAcademicSemesters = catchAsync(async (req, res) => {
+    const academicSemesters = await academicSemesterService.getAcademicSemestersFromDB();
+    
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: 'Academic semesters fetched successfully',
+        data: academicSemesters
+    })
+    });
+
+const getAcademicSemesterById = catchAsync(async (req, res) => {
+    const academicSemester = await academicSemesterService.getAcademicSemesterByIdFromDB(req.params.semesterId);
+
+    if(!academicSemester) {
+        throw createHttpError.NotFound('Academic semester not found');
+    }
+    
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: 'Academic semester fetched successfully',
+        data: academicSemester
+    })}
+);
+
+const updateAcademicSemesterById = catchAsync(async (req, res) => {
+    
+    const academicSemester = await academicSemesterService.updateAcademicSemesterByIdFromDB(req.params.semesterId, req.body);
+    
+    if(!academicSemester) {
+        throw createHttpError(httpStatus.NOT_FOUND, 'Academic semester not found');
+    }
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: 'Academic semester updated successfully',
+        data: academicSemester
+    })
+    }
+);
+
 export const academicSemesterController = {
-  createAcademicSemester
+  createAcademicSemester,
+  getAcademicSemesters,
+  getAcademicSemesterById,
+  updateAcademicSemesterById
 }
