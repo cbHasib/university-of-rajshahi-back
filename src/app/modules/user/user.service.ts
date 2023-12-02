@@ -1,8 +1,11 @@
 import config from "../../config";
+import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
+import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import { TStudent } from "../student/student.interface";
 import { Student } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
+import { generateStudentId } from "./user.utils";
 
 const createStudentIntoDB = async (password : string, studentData: TStudent) => {
 
@@ -13,9 +16,12 @@ const createStudentIntoDB = async (password : string, studentData: TStudent) => 
   
     // If password is not provided, set it to default password
     userData.password = password || (config.default_password as string);    
+
+    // Find academic semester
+    const academicSemester = await AcademicSemester.findById(studentData.admissionSemester);
     
     // Set student id (Manually)
-    userData.id = '202301001'
+    userData.id = await generateStudentId(academicSemester as TAcademicSemester);
 
     // Create a new user
     const newUser = await User.create(userData); 
@@ -31,6 +37,8 @@ const createStudentIntoDB = async (password : string, studentData: TStudent) => 
 
     return null;
   };
+
+
 
 export const UserServices = {
     createStudentIntoDB,
