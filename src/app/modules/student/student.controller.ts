@@ -1,27 +1,21 @@
-import { NextFunction, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 import { StudentServices } from './student.service';
-import studentValidationSchema from './student.validation';
 import httpStatus from 'http-status';
 import sendResponse from '../../utils/sendResponse';
+import catchAsync from '../../utils/catchAsync';
 
-const getStudents = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await StudentServices.getStudentsFromDB();
+const getStudents = catchAsync(async (req, res) => {
+  const result = await StudentServices.getStudentsFromDB();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Students fetched successfully',
+    data: result,
+  });
+});
 
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: 'Students fetched successfully',
-      data: result,
-    })
 
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getSingleStudent = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+const getSingleStudent = catchAsync(async (req, res) => {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
 
@@ -30,19 +24,13 @@ const getSingleStudent = async (req: Request, res: Response, next: NextFunction)
       statusCode: httpStatus.OK,
       message: 'Student fetched successfully',
       data: result,
-    })
-
-  } catch (error) {
-    next(error);
-  }
-};
+    });
+})
 
 
-const deleteStudent = async (req: Request, res: Response, next: NextFunction) => {
-  try {    
-
+const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
     const { studentId } = req.params;
-    
+
     const result = await StudentServices.deleteStudentFromDB(studentId);
 
     sendResponse(res, {
@@ -51,10 +39,7 @@ const deleteStudent = async (req: Request, res: Response, next: NextFunction) =>
       message: 'Student deleted successfully',
       data: result,
     })
-  } catch (error:any) {
-    next(error);
-  }
-};
+})
 
 export const StudentController = {
   getStudents,
