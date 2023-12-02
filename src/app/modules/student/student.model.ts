@@ -6,8 +6,6 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -144,12 +142,12 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       // },
     },
 
-    phone: {
+    contactNo: {
       type: String,
       required: [true, 'Phone is required'],
     },
 
-    emergencyPhone: {
+    emergencyContactNo: {
       type: String,
       required: [true, 'Emergency phone is required'],
     },

@@ -19,14 +19,11 @@ const createStudentIntoDB = async (password : string, studentData: TStudent) => 
 
     // Create a new user
     const newUser = await User.create(userData); 
-console.log(newUser);
     // Create a new student
     if(Object.keys(newUser).length){
         // Set student id, _id as user id
-        console.log(newUser.id);
         studentData.id = newUser?.id ;
         studentData.user = newUser._id;
-        console.log(studentData);
         // Create a new student
         const newStudent = await Student.create(studentData);
         return newStudent;
