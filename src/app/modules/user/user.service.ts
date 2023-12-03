@@ -1,3 +1,4 @@
+import createHttpError from "http-errors";
 import config from "../../config";
 import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
@@ -19,6 +20,10 @@ const createStudentIntoDB = async (password : string, studentData: TStudent) => 
 
     // Find academic semester
     const academicSemester = await AcademicSemester.findById(studentData.admissionSemester);
+
+    if(!academicSemester) {
+        throw createHttpError.NotFound('Academic semester not found');
+    }
     
     // Set student id (Manually)
     userData.id = await generateStudentId(academicSemester as TAcademicSemester);
