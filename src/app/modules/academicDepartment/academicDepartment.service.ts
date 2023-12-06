@@ -1,7 +1,8 @@
-import createHttpError from "http-errors";
 import { TAcademicDepartment } from "./academicDepartment.interface";
 import { AcademicDepartment } from "./academicDepartment.model";
 import { AcademicFaculty } from "../academicFaculty/academicFaculty.model";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const createAcademicDepartmentIntoDB = async (academicDepartment: TAcademicDepartment) => {
     const newAcademicDepartment = await AcademicDepartment.create(academicDepartment);
@@ -18,7 +19,7 @@ const getAcademicDepartmentByIdFromDB = async (id: string) => {
     const academicDepartment = await AcademicDepartment.findById(id).populate('academicFaculty', 'name');
 
     if (!academicDepartment) {
-        throw createHttpError.NotFound('Academic Department not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'This academic department does not exist')
     }
     return academicDepartment;
 }
@@ -28,7 +29,7 @@ const updateAcademicDepartmentByIdFromDB = async (id: string, academicDepartment
     if (academicDepartment.academicFaculty) {
         const academicFaculty = await AcademicFaculty.findById(academicDepartment.academicFaculty);
         if (!academicFaculty) {
-            throw createHttpError.NotFound('Academic Faculty not found');
+            throw new AppError(httpStatus.NOT_FOUND, 'Academic Faculty not found');
         }
     }
 

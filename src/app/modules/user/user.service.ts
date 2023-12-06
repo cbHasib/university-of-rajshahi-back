@@ -1,4 +1,3 @@
-import createHttpError from "http-errors";
 import config from "../../config";
 import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
@@ -7,6 +6,8 @@ import { Student } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
 import { generateStudentId } from "./user.utils";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const createStudentIntoDB = async (password : string, studentData: TStudent) => {
 
@@ -22,7 +23,7 @@ const createStudentIntoDB = async (password : string, studentData: TStudent) => 
     const academicSemester = await AcademicSemester.findById(studentData.admissionSemester);
 
     if(!academicSemester) {
-        throw createHttpError.NotFound('Academic semester not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found');
     }
     
     // Set student id (Manually)

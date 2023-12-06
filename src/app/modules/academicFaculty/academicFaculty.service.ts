@@ -1,6 +1,7 @@
-import createHttpError from "http-errors";
 import { TAcademicFaculty } from "./academicFaculty.interface";
 import { AcademicFaculty } from "./academicFaculty.model";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const createAcademicFacultyIntoDB = async (academicFaculty:TAcademicFaculty) => {
     const newAcademicFaculty = await AcademicFaculty.create(academicFaculty);
@@ -15,7 +16,7 @@ const getAcademicFacultiesFromDB = async () => {
 const getAcademicFacultyByIdFromDB = async (id:string) => {
     const academicFaculty = await AcademicFaculty.findById(id);
     if (!academicFaculty) {
-        throw createHttpError.NotFound('Academic Faculty not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'This academic faculty does not exist')
     }
     return academicFaculty;
 }
@@ -23,7 +24,7 @@ const getAcademicFacultyByIdFromDB = async (id:string) => {
 const updateAcademicFacultyByIdFromDB = async (id:string, academicFaculty:TAcademicFaculty) => {
     const updatedContent = await AcademicFaculty.findOneAndUpdate({_id: id}, academicFaculty, {new: true});
     if (!updatedContent) {
-        throw createHttpError.NotFound('Academic Faculty not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'This academic faculty does not exist')
     }
     return updatedContent;
 }

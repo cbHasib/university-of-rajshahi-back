@@ -2,15 +2,32 @@ import { TStudent } from './student.interface';
 import { Student } from './student.model';
 
 const getStudentsFromDB = async () => {
-  const result = await Student.find().populate('academicDepartment', 'name').sort({ createdAt: -1 });
+  const result = await Student.find()
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      select: 'name',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    })
+    .sort({ createdAt: -1 });
   return result;
 };
 
 const getSingleStudentFromDB = async (studentId: string) => {
-  const result = await Student.find({ id: studentId });
+  const result = await Student.find({ id: studentId }).populate('admissionSemester')
+  .populate({
+    path: 'academicDepartment',
+    select: 'name',
+    populate: {
+      path: 'academicFaculty',
+      select: 'name',
+    },
+  });
   return result;
 };
-
 
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
@@ -55,12 +72,13 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   return result;
 };
 
-
 const deleteStudentFromDB = async (studentId: string) => {
-  const result = await Student.updateOne({ id: studentId }, { isDeleted: true });
+  const result = await Student.updateOne(
+    { id: studentId },
+    { isDeleted: true },
+  );
   return result;
-}
-
+};
 
 export const StudentServices = {
   getStudentsFromDB,

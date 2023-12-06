@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { academicSemesterService } from "./academicSemester.service";
-import createHttpError from "http-errors";
+import AppError from "../../errors/AppError";
 
 const createAcademicSemester = catchAsync(async (req, res) => {
   const academicSemester = await academicSemesterService.createAcademicSemesterIntoDB(req.body);
@@ -31,7 +31,7 @@ const getAcademicSemesterById = catchAsync(async (req, res) => {
     const academicSemester = await academicSemesterService.getAcademicSemesterByIdFromDB(req.params.semesterId);
 
     if(!academicSemester) {
-        throw createHttpError.NotFound('Academic semester not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found');
     }
     
     sendResponse(res, {
@@ -47,7 +47,7 @@ const updateAcademicSemesterById = catchAsync(async (req, res) => {
     const academicSemester = await academicSemesterService.updateAcademicSemesterByIdFromDB(req.params.semesterId, req.body);
     
     if(!academicSemester) {
-        throw createHttpError(httpStatus.NOT_FOUND, 'Academic semester not found');
+        throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found');
     }
 
     sendResponse(res, {
