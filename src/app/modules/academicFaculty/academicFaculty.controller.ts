@@ -5,7 +5,7 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 
 const createAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
-  const { faculty: facultyData } = req.body;
+  const facultyData  = req.body;
 
   const result =
     await academicFacultyService.createAcademicFacultyIntoDB(facultyData);
@@ -45,7 +45,7 @@ const getAcademicFacultyById: RequestHandler = catchAsync(async (req, res) => {
 const updateAcademicFacultyById: RequestHandler = catchAsync(
   async (req, res) => {
     const { facultyId } = req.params;
-    const { faculty: facultyData } = req.body;
+    const  facultyData = req.body;
     const result = await academicFacultyService.updateAcademicFacultyByIdFromDB(
       facultyId,
       facultyData,
