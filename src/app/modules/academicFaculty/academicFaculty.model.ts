@@ -5,7 +5,8 @@ const academicFacultyModel = new Schema<TAcademicFaculty>({
     name: {
         type: String,
         required: [true, 'Name is required'],
-        unique: true
+        unique: true,
+        trim: true
     }
 }, {
     timestamps: true
