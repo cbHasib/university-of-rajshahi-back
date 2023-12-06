@@ -4,19 +4,7 @@ import { AcademicDepartment } from "./academicDepartment.model";
 import { AcademicFaculty } from "../academicFaculty/academicFaculty.model";
 
 const createAcademicDepartmentIntoDB = async (academicDepartment: TAcademicDepartment) => {
-
-    const academicFaculty = await AcademicFaculty.findById(academicDepartment.academicFaculty);
-    if (!academicFaculty) {
-        throw createHttpError.NotFound('Academic Faculty not found');
-    }
-
-    const department = await AcademicDepartment.findOne({ name: academicDepartment.name });
-    if (department) {
-        throw createHttpError.Conflict(`${academicDepartment.name} already exists`);
-    }
-
     const newAcademicDepartment = await AcademicDepartment.create(academicDepartment);
-
     return newAcademicDepartment;
 }
 
@@ -44,17 +32,9 @@ const updateAcademicDepartmentByIdFromDB = async (id: string, academicDepartment
         }
     }
 
-    const department = await AcademicDepartment.findById(id);
-    if (!department) {
-        throw createHttpError.NotFound('Academic Department not found');
-    }
-
-    department.name = academicDepartment.name || department.name;
-    department.academicFaculty = academicDepartment.academicFaculty || department.academicFaculty;
-    department.save();
+    const department = await AcademicDepartment.findByIdAndUpdate(id, academicDepartment, { new: true });
     return department;
 }
-
 
 
 
