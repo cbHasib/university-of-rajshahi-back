@@ -32,12 +32,6 @@ const userNameSchema = new Schema<TUserName>({
     trim: true,
     maxlength: [20, 'Last name can not be more than 20 characters'],
     minlength: [1, 'Last name can not be less than 1 characters'],
-    // validate: {
-    //   validator: (value: string) => {
-    //     validator.isAlpha(value);
-    //   },
-    //   message: 'Last name {VALUE} is not valid',
-    // }
   },
 });
 
@@ -136,10 +130,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Email is required'],
       unique: true,
       trim: true,
-      // validate: {
-      //   validator: (value: string) => validator.isEmail(value),
-      //   message: '{VALUE} is not a valid email',
-      // },
     },
 
     contactNo: {
