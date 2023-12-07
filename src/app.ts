@@ -1,11 +1,10 @@
 import express, { NextFunction, Request, Response } from 'express';
 const app = express();
 import cors from 'cors';
-import { StudentRoute } from './app/modules/student/student.route';
-import { UserRoute } from './app/modules/user/user.route';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFoundHandler from './app/middlewares/notFoundHandler';
 import router from './app/routes';
+import sendResponse from './app/utils/sendResponse';
 
 // parser
 app.use(express.json());
@@ -14,11 +13,17 @@ app.use(cors());
 // Application routes
 app.use('/api/v1', router);
 
-app.get('/', (req, res) => {
-  const a = 10;
-  res.send(a);
-});
+const test = async (req: Request, res: Response) => {
+  const welcomeMessage = 'Welcome to the API';
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: welcomeMessage,
+    data: null,
+  });
+};
 
+app.get('/', test);
 
 // Error handler
 app.use(globalErrorHandler);
