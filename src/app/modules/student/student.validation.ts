@@ -41,11 +41,10 @@ const createStudentValidationSchema = z.object({
       localGuardian: createLocalGuardianValidationSchema,
       profilePicture: z.string().optional(),
       admissionSemester: z.string(),
-      academicDepartment: z.string()
+      academicDepartment: z.string(),
     }),
   }),
 });
-
 
 const updateUserNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20).optional(),
@@ -71,24 +70,30 @@ const updateLocalGuardianValidationSchema = z.object({
 
 export const updateStudentValidationSchema = z.object({
   body: z.object({
-    student: z.object({
-      name: updateUserNameValidationSchema,
-      gender: z.enum(['male', 'female', 'other']).optional(),
-      dateOfBirth: z.string().optional(),
-      email: z.string().email().optional(),
-      contactNo: z.string().optional(),
-      emergencyContactNo: z.string().optional(),
-      bloogGroup: z
-        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-        .optional(),
-      presentAddress: z.string().optional(),
-      permanentAddress: z.string().optional(),
-      guardian: updateGuardianValidationSchema.optional(),
-      localGuardian: updateLocalGuardianValidationSchema.optional(),
-      admissionSemester: z.string().optional(),
-      profileImg: z.string().optional(),
-      academicDepartment: z.string().optional(),
-    }),
+    student: z.object(
+      {
+        name: updateUserNameValidationSchema.optional(),
+        gender: z.enum(['male', 'female', 'other']).optional(),
+        dateOfBirth: z.string().optional(),
+        email: z.string().email().optional(),
+        contactNo: z.string().optional(),
+        emergencyContactNo: z.string().optional(),
+        bloogGroup: z
+          .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+          .optional(),
+        presentAddress: z.string().optional(),
+        permanentAddress: z.string().optional(),
+        guardian: updateGuardianValidationSchema.optional(),
+        localGuardian: updateLocalGuardianValidationSchema.optional(),
+        admissionSemester: z.string().optional(),
+        profileImg: z.string().optional(),
+        academicDepartment: z.string().optional(),
+      },
+      {
+        required_error: 'Student is required',
+        invalid_type_error: 'Student must be an object',
+      },
+    ),
   }),
 });
 
