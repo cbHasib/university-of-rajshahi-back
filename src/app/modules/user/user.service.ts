@@ -5,7 +5,7 @@ import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
-import { generateFacultyId, generateStudentId } from './user.utils';
+import { generateAdminId, generateFacultyId, generateStudentId } from './user.utils';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
@@ -13,6 +13,8 @@ import { AcademicDepartment } from '../academicDepartment/academicDepartment.mod
 import { TFaculty } from '../faculty/faculty.interface';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
 import { Faculty } from '../faculty/faculty.model';
+import { TAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // create a user object
@@ -147,7 +149,68 @@ const createFacultyIntoDB = async (password: string, facultyData: TFaculty) => {
 
 
 
+const createAdminIntoDB = async (password: string, adminData: TAdmin) => {
+  // create a user object
+  const userData: Partial<TUser> = {};
+  // Set faculty role
+  userData.role = 'admin';
+
+  // If password is not provided, set it to default password
+  userData.password = password || (config.default_password as string);
+
+  // Find academic department
+  const academicDepartment = await AcademicDepartment.findById(
+    adminData.managementDepartment,
+  );
+
+  if (!academicDepartment) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Management department not found');
+  }
+
+
+  const session = await mongoose.startSession();
+
+  try {
+    // Start transaction
+    session.startTransaction();
+    // Set faculty id (Manually)
+    userData.id = await generateAdminId()
+
+    // Create a new user (transaction 1)
+    const newUser = await User.create([userData], { session });
+
+    // Create a new faculty
+    if (!newUser?.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+
+    adminData.id = newUser[0]?.id;
+    adminData.user = newUser[0]._id;
+
+    // Create a new faculty (transaction 2)
+    const newAdmin = await Admin.create([adminData], { session });
+
+    if (!newAdmin?.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');
+    } 
+
+    // Commit transaction
+    await session.commitTransaction();
+    await session.endSession();
+
+    return newAdmin;
+  } catch (error) {
+    // Rollback transaction
+    await session.abortTransaction();
+    await session.endSession();
+
+    throw error;
+  }
+};
+
+
 export const UserServices = {
   createStudentIntoDB,
-  createFacultyIntoDB
+  createFacultyIntoDB,
+  createAdminIntoDB
 };

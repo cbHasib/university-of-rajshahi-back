@@ -47,3 +47,20 @@ export const generateFacultyId = async () => {
   
   return incrementedId;
 };
+
+
+export const generateAdminId = async () => {
+  const lastAdmin = await User.findOne({ role: 'admin' }, { id: 1, _id: 0 })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // ID Format: A-0000 (A-0001, A-0002, A-0003, ...)
+  const currentId = lastAdmin?.id
+    ? lastAdmin.id.substring(2)
+    : (0).toString().padStart(4, '0');
+
+  let incrementedId = (Number(currentId) + 1).toString().padStart(4, '0');
+  incrementedId = `A-${incrementedId}`;
+  
+  return incrementedId;
+};
