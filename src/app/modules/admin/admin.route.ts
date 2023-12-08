@@ -6,8 +6,8 @@ import { updateAdminValidationSchema } from './admin.validation';
 const router = express.Router();
 
 router.get('/', AdminController.getAdmins);
-router.get('/:adminId', AdminController.getSingleAdmin);
-router.patch('/:adminId', validateRequest(updateAdminValidationSchema), AdminController.updateAdmin);
-router.delete('/:adminId', AdminController.deleteAdmin);
+router.get('/:id', AdminController.getSingleAdmin);
+router.patch('/:id', validateRequest(updateAdminValidationSchema), AdminController.updateAdmin);
+router.delete('/:id', AdminController.deleteAdmin);
 
 export const AdminRoutes = router;

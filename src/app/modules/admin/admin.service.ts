@@ -23,8 +23,8 @@ const adminQurey = new QueryBuilder(
   return result;
 };
 
-const getSingleAdminFromDB = async (adminId: string) => {
-  const result = await Admin.findOne({ id: adminId })
+const getSingleAdminFromDB = async (id: string) => {
+  const result = await Admin.findOne({ id })
     .populate('managementDepartment', 'name');
 
   if (!result) {
@@ -81,8 +81,8 @@ const deleteAdminFromDB = async (adminId: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin');
     }
 
-    const deletedUser = await User.findOneAndUpdate(
-      { id: adminId },
+    const deletedUser = await User.findByIdAndUpdate(
+      { _id: deletedAdmin.user },
       { isDeleted: true },
       { new: true, session },
     );

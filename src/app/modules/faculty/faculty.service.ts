@@ -24,8 +24,8 @@ const facultyQurey = new QueryBuilder(
   return result;
 };
 
-const getSingleFacultyFromDB = async (facultyId: string) => {
-  const result = await Faculty.findOne({ id: facultyId })
+const getSingleFacultyFromDB = async (id: string) => {
+  const result = await Faculty.findOne({ id })
     .populate('academicFaculty', 'name')
     .populate('academicDepartment', 'name');
 
@@ -67,14 +67,14 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
   return result;
 };
 
-const deleteFacultyFromDB = async (facultyId: string) => {
+const deleteFacultyFromDB = async (id: string) => {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
     const deletedFaculty = await Faculty.findOneAndUpdate(
-      { id: facultyId },
+      { id: id },
       { isDeleted: true },
       { new: true, session },
     );
@@ -83,8 +83,8 @@ const deleteFacultyFromDB = async (facultyId: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty');
     }
 
-    const deletedUser = await User.findOneAndUpdate(
-      { id: facultyId },
+    const deletedUser = await User.findByIdAndUpdate(
+      { _id: deletedFaculty.user },
       { isDeleted: true },
       { new: true, session },
     );
@@ -108,5 +108,5 @@ export const FacultyServices = {
   getFacultiesFromDB,
   getSingleFacultyFromDB,
   updateFacultyIntoDB,
-    deleteFacultyFromDB,
+  deleteFacultyFromDB,
 };
