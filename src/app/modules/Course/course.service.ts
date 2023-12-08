@@ -2,8 +2,8 @@ import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { courseSearchableFields } from './course.constant';
-import { TCourse } from './course.interface';
-import { Course } from './course.model';
+import { TCourse, TCourseFaculty } from './course.interface';
+import { Course, CourseFaculty } from './course.model';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -52,14 +52,13 @@ const updateCourseInDB = async (id: string, payload: Partial<TCourse>) => {
       },
     );
 
-
     if (!updateBasicInfo) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
     }
 
     returnData = {
-        ...returnData,
-        updateBasicInfo,
+      ...returnData,
+      updateBasicInfo,
     };
 
     //   Check if preRequisiteCourses is present in payload for update
@@ -110,18 +109,17 @@ const updateCourseInDB = async (id: string, payload: Partial<TCourse>) => {
         throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
       }
 
-        returnData = {
-            ...returnData,
-            newPreRequisiteCourses,
-            deletePreRequisiteCourses
-        };
+      returnData = {
+        ...returnData,
+        newPreRequisiteCourses,
+        deletePreRequisiteCourses,
+      };
     }
 
     await session.commitTransaction();
     session.endSession();
-    
-    return returnData;
 
+    return returnData;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -143,10 +141,31 @@ const deleteCourseFromDB = async (id: string) => {
   return result;
 };
 
+const assignFacultiesToCourseInDB = async (
+  courseId: string,
+  payload: Partial<TCourseFaculty>,
+) => {
+  const result = await CourseFaculty.findByIdAndUpdate(
+    courseId,
+    {
+      $addToSet: {
+        faculties: { $each: payload.faculties },
+      },
+    },
+    {
+      upsert: true,
+      new: true,
+    },
+  );
+
+  return result;
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getCoursesFromDB,
   getSingleCourseFromDB,
   updateCourseInDB,
   deleteCourseFromDB,
+  assignFacultiesToCourseInDB,
 };
