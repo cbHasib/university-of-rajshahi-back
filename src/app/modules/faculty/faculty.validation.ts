@@ -6,27 +6,13 @@ const createUserNameValidationSchema = z.object({
   lastName: z.string().min(1).max(20),
 });
 
-const createGuardianValidationSchema = z.object({
-  fatherName: z.string(),
-  fatherPhone: z.string(),
-  fatherOccupation: z.string(),
-  motherName: z.string(),
-  motherPhone: z.string(),
-  motherOccupation: z.string(),
-});
 
-const createLocalGuardianValidationSchema = z.object({
-  name: z.string(),
-  relation: z.string(),
-  phone: z.string(),
-  address: z.string(),
-});
-
-const createStudentValidationSchema = z.object({
+const createFacultyValidationSchema = z.object({
   body: z.object({
     password: z.string().min(6).max(20),
-    student: z.object({
+    faculty: z.object({
       name: createUserNameValidationSchema,
+      designation: z.string(),
       gender: z.enum(['male', 'female']),
       dateOfBirth: z.string().optional(),
       email: z.string().email(),
@@ -37,10 +23,8 @@ const createStudentValidationSchema = z.object({
         .optional(),
       presentAddress: z.string(),
       permanentAddress: z.string(),
-      guardian: createGuardianValidationSchema,
-      localGuardian: createLocalGuardianValidationSchema,
       profilePicture: z.string().optional(),
-      admissionSemester: z.string(),
+      academicFaculty: z.string(),
       academicDepartment: z.string(),
     }),
   }),
@@ -52,27 +36,13 @@ const updateUserNameValidationSchema = z.object({
   lastName: z.string().optional(),
 });
 
-const updateGuardianValidationSchema = z.object({
-  fatherName: z.string().optional(),
-  fatherOccupation: z.string().optional(),
-  fatherContactNo: z.string().optional(),
-  motherName: z.string().optional(),
-  motherOccupation: z.string().optional(),
-  motherContactNo: z.string().optional(),
-});
 
-const updateLocalGuardianValidationSchema = z.object({
-  name: z.string().optional(),
-  occupation: z.string().optional(),
-  contactNo: z.string().optional(),
-  address: z.string().optional(),
-});
-
-export const updateStudentValidationSchema = z.object({
+export const updateFacultyValidationSchema = z.object({
   body: z.object({
-    student: z.object(
+    faculty: z.object(
       {
         name: updateUserNameValidationSchema.optional(),
+        designation: z.string().optional(),
         gender: z.enum(['male', 'female', 'other']).optional(),
         dateOfBirth: z.string().optional(),
         email: z.string().email().optional(),
@@ -83,21 +53,19 @@ export const updateStudentValidationSchema = z.object({
           .optional(),
         presentAddress: z.string().optional(),
         permanentAddress: z.string().optional(),
-        guardian: updateGuardianValidationSchema.optional(),
-        localGuardian: updateLocalGuardianValidationSchema.optional(),
-        admissionSemester: z.string().optional(),
         profilePicture: z.string().optional(),
+        academicFaculty: z.string().optional(),
         academicDepartment: z.string().optional(),
       },
       {
-        required_error: 'Student is required',
-        invalid_type_error: 'Student must be an object',
+        required_error: 'Faculty is required',
+        invalid_type_error: 'Faculty must be an object',
       },
     ),
   }),
 });
 
-export const studentValidations = {
-  createStudentValidationSchema,
-  updateStudentValidationSchema,
+export const facultyValidations = {
+  createFacultyValidationSchema,
+  updateFacultyValidationSchema,
 };

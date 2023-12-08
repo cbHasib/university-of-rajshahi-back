@@ -6,3 +6,10 @@ export type TUser = {
     status: 'active' | 'inactive' | 'banned';
     isDeleted: boolean;
 }
+
+
+export type TUserName = {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+  };

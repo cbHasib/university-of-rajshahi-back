@@ -1,10 +1,5 @@
 import { Schema, model } from 'mongoose';
-import {
-  TGuardian,
-  TLocalGuardian,
-  TStudent,
-  StudentModel,
-} from './student.interface';
+import { FacultyModel, TFaculty } from './faculty.interface';
 import { TUserName } from '../user/user.interface';
 
 const userNameSchema = new Schema<TUserName>({
@@ -15,12 +10,12 @@ const userNameSchema = new Schema<TUserName>({
     maxlength: [20, 'First name can not be more than 20 characters'],
     minlength: [1, 'First name can not be less than 1 characters'],
     validate: {
-      validator:function (value: string) {
+      validator: function (value: string) {
         const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
         return firstNameStr === value;
       },
-      message: 'First name must be capitalized'
-    }
+      message: 'First name must be capitalized',
+    },
   },
   middleName: {
     type: String,
@@ -35,63 +30,7 @@ const userNameSchema = new Schema<TUserName>({
   },
 });
 
-const guardianSchema = new Schema<TGuardian>({
-  fatherName: {
-    type: String,
-    required: [true, 'Father name is required'],
-    trim: true
-  },
-  fatherPhone: {
-    type: String,
-    required: [true, 'Father phone is required'],
-    trim: true
-  },
-  fatherOccupation: {
-    type: String,
-    required: [true, 'Father occupation is required'],
-    trim: true
-  },
-  motherName: {
-    type: String,
-    required: [true, 'Mother name is required'],
-    trim: true
-  },
-  motherPhone: {
-    type: String,
-    required: [true, 'Mother phone is required'],
-    trim: true
-  },
-  motherOccupation: {
-    type: String,
-    required: [true, 'Mother occupation is required'],
-    trim: true
-  },
-});
-
-const localGuardianSchema = new Schema<TLocalGuardian>({
-  name: {
-    type: String,
-    required: [true, 'Local guardian name is required'],
-    trim: true
-  },
-  relation: {
-    type: String,
-    required: [true, 'Local guardian relation is required'],
-    trim: true
-  },
-
-  phone: {
-    type: String,
-    required: [true, 'Local guardian phone is required'],
-  },
-  address: {
-    type: String,
-    required: [true, 'Local guardian address is required'],
-    trim: true
-  },
-});
-
-const studentSchema = new Schema<TStudent, StudentModel>(
+const facultySchema = new Schema<TFaculty, FacultyModel>(
   {
     id: {
       type: String,
@@ -110,6 +49,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     name: {
       type: userNameSchema,
       required: [true, 'Name is required'],
+    },
+
+    designation: {
+      type: String,
+      required: [true, 'Designation is required'],
     },
 
     gender: {
@@ -160,21 +104,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Permanent address is required'],
     },
 
-    guardian: {
-      type: guardianSchema,
-      required: [true, 'Guardian is required'],
-    },
-
-    localGuardian: {
-      type: localGuardianSchema,
-      required: [true, 'Local guardian is required'],
-    },
-
     profilePicture: { type: String },
 
-    admissionSemester: {
+    academicFaculty: {
       type: Schema.Types.ObjectId,
-      ref: 'AcademicSemester',
+      ref: 'AcademicFaculty',
     },
 
     academicDepartment: {
@@ -194,45 +128,33 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       updatedAt: true,
     },
     toJSON: {
-      virtuals: true
+      virtuals: true,
     },
   },
 );
 
-
-
-
 // Query middleware / hook : will run before find
-studentSchema.pre('find', function (next) {
+facultySchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
-})
-
-studentSchema.pre('findOne', function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
-})
-
-
-
-
-// Virtual property
-studentSchema.virtual('fullName').get(function () {
-  return this?.name ? `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}` : '';
 });
 
+facultySchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
 
-
-
-
-
+// Virtual property
+facultySchema.virtual('fullName').get(function () {
+  return this?.name
+    ? `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`
+    : '';
+});
 
 // Create a custom static method
-studentSchema.statics.isUserExist = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
+facultySchema.statics.isUserExist = async function (id: string) {
+  const existingUser = await Faculty.findOne({ id });
   return existingUser;
-}
+};
 
-
-
-export const Student = model<TStudent, StudentModel>('Student', studentSchema);
+export const Faculty = model<TFaculty, FacultyModel>('Faculty', facultySchema);

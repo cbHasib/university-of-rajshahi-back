@@ -25,10 +25,12 @@ const test = async (req: Request, res: Response) => {
 
 app.get('/', test);
 
+// Not Found handler
+app.use(notFoundHandler);
+
 // Error handler
 app.use(globalErrorHandler);
 
-// Not Found handler
-app.use(notFoundHandler);
+
 
 export default app;

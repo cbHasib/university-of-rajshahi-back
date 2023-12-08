@@ -98,7 +98,7 @@ const getStudentsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleStudentFromDB = async (studentId: string) => {
-  const result = await Student.find({ id: studentId })
+  const result = await Student.findOne({ id: studentId })
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -108,6 +108,12 @@ const getSingleStudentFromDB = async (studentId: string) => {
         select: 'name',
       },
     });
+
+
+    if(!result) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
+    }
+
   return result;
 };
 
@@ -151,6 +157,11 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
     new: true,
     runValidators: true,
   });
+
+  if (!result) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update student');
+  }
+
   return result;
 };
 
