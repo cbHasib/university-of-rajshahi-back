@@ -1,9 +1,9 @@
 import express from 'express';
 import { UserController } from './user.controller';
 import validateRequest from '../../middlewares/validateRequest';
-import { studentValidations } from '../student/student.validation';
-import { facultyValidations } from '../faculty/faculty.validation';
-import { adminValidations } from '../admin/admin.validation';
+import { studentValidations } from '../Student/student.validation';
+import { facultyValidations } from '../Faculty/faculty.validation';
+import { adminValidations } from '../Admin/admin.validation';
 
 const router = express.Router();
 

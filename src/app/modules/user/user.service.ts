@@ -1,8 +1,8 @@
 import config from '../../config';
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { TStudent } from '../student/student.interface';
-import { Student } from '../student/student.model';
+import { TStudent } from '../Student/student.interface';
+import { Student } from '../Student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { generateAdminId, generateFacultyId, generateStudentId } from './user.utils';
@@ -10,11 +10,11 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
-import { TFaculty } from '../faculty/faculty.interface';
+import { TFaculty } from '../Faculty/faculty.interface';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
-import { Faculty } from '../faculty/faculty.model';
-import { TAdmin } from '../admin/admin.interface';
-import { Admin } from '../admin/admin.model';
+import { Faculty } from '../Faculty/faculty.model';
+import { TAdmin } from '../Admin/admin.interface';
+import { Admin } from '../Admin/admin.model';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // create a user object
