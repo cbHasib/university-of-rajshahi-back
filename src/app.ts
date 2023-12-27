@@ -5,10 +5,12 @@ import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFoundHandler from './app/middlewares/notFoundHandler';
 import router from './app/routes';
 import sendResponse from './app/utils/sendResponse';
+import cookieParser from 'cookie-parser';
 
 // parser
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors( { origin: ['http://localhost:5173'] } ));
 
 // Application routes
 app.use('/api/v1', router);
