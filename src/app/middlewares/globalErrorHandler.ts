@@ -6,6 +6,8 @@ import handleValidationError from '../errors/handleValidationError';
 import handleCastError from '../errors/handleCastError';
 import handleDublicateError from '../errors/handleDublicateError';
 import AppError from '../errors/AppError';
+import { JsonWebTokenError } from 'jsonwebtoken';
+import handleJwtError from '../errors/handleJwtError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode = 500;
@@ -23,6 +25,11 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSource;
+  } else if (err instanceof JsonWebTokenError) {
+    const simplify = handleJwtError(err);
+    statusCode = simplify.statusCode;
+    message = simplify?.message;
+    errorSources = simplify?.errorSource;
   } else if (err?.name === 'ValidationError') {
     const simplifiedError = handleValidationError(err);
     statusCode = simplifiedError?.statusCode;
